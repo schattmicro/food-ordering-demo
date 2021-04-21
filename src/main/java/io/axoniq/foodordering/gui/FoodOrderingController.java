@@ -64,7 +64,7 @@ class FoodOrderingController {
         );
     }
 
-    @GetMapping("{foodCartId}/foodCartHistory")
+    @GetMapping("/{foodCartId}/foodCartHistory")
     public List<Object> getFoodCartHistory(String foodCartId) {
         return eventStore.readEvents(foodCartId).asStream().map( s -> s.getPayload().toString()).collect(Collectors.toList());
     }
