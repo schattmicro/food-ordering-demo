@@ -16,11 +16,13 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Profile("command")
 @Aggregate
 class FoodCart {
 
@@ -28,7 +30,7 @@ class FoodCart {
 
     @AggregateIdentifier
     private UUID foodCartId;
-    private Map<UUID, Integer> selectedProducts;
+    private Map<String, Integer> selectedProducts;
     private boolean confirmed;
 
     public FoodCart() {
@@ -47,7 +49,7 @@ class FoodCart {
 
     @CommandHandler
     public void handle(DeselectProductCommand command) throws ProductDeselectionException {
-        UUID productId = command.getProductId();
+        String productId = command.getProductId();
         int quantity = command.getQuantity();
 
         if (!selectedProducts.containsKey(productId)) {

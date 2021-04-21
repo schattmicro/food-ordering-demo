@@ -8,6 +8,7 @@ import io.axoniq.foodordering.query.FoodCartView;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@Profile("gui")
 @RequestMapping("/foodCart")
 @RestController
 class FoodOrderingController {
@@ -39,7 +41,7 @@ class FoodOrderingController {
                               @PathVariable("productId") String productId,
                               @PathVariable("quantity") Integer quantity) {
         commandGateway.send(new SelectProductCommand(
-                UUID.fromString(foodCartId), UUID.fromString(productId), quantity
+                UUID.fromString(foodCartId), productId, quantity
         ));
     }
 
@@ -48,7 +50,7 @@ class FoodOrderingController {
                                 @PathVariable("productId") String productId,
                                 @PathVariable("quantity") Integer quantity) {
         commandGateway.send(new DeselectProductCommand(
-                UUID.fromString(foodCartId), UUID.fromString(productId), quantity
+                UUID.fromString(foodCartId), productId, quantity
         ));
     }
 
