@@ -6,17 +6,16 @@ import io.axoniq.foodordering.coreapi.FindFoodCartQuery;
 import io.axoniq.foodordering.coreapi.SelectProductCommand;
 import io.axoniq.foodordering.query.FoodCartView;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.context.annotation.Profile;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Profile("gui")
 @RequestMapping("/foodCart")
@@ -25,11 +24,14 @@ class FoodOrderingController {
 
     private final CommandGateway commandGateway;
     private final QueryGateway queryGateway;
+    private final EventStore eventStore;
 
-    public FoodOrderingController(CommandGateway commandGateway, QueryGateway queryGateway) {
+    public FoodOrderingController(CommandGateway commandGateway, QueryGateway queryGateway, EventStore eventStore) {
         this.commandGateway = commandGateway;
         this.queryGateway = queryGateway;
+        this.eventStore = eventStore;
     }
+
 
     @PostMapping("/create")
     public CompletableFuture<UUID> createFoodCart() {
@@ -61,4 +63,10 @@ class FoodOrderingController {
                 ResponseTypes.instanceOf(FoodCartView.class)
         );
     }
+
+    @GetMapping("{foodCartId}/foodCartHistory")
+    public List<Object> getFoodCartHistory(String foodCartId) {
+        return eventStore.readEvents(foodCartId).asStream().map( s -> s.getPayload().toString()).collect(Collectors.toList());
+    }
+
 }
