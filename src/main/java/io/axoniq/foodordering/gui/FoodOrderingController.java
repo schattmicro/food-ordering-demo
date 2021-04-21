@@ -1,9 +1,6 @@
 package io.axoniq.foodordering.gui;
 
-import io.axoniq.foodordering.coreapi.CreateFoodCartCommand;
-import io.axoniq.foodordering.coreapi.DeselectProductCommand;
-import io.axoniq.foodordering.coreapi.FindFoodCartQuery;
-import io.axoniq.foodordering.coreapi.SelectProductCommand;
+import io.axoniq.foodordering.coreapi.*;
 import io.axoniq.foodordering.query.FoodCartView;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
@@ -67,6 +64,12 @@ class FoodOrderingController {
     @GetMapping("/{foodCartId}/foodCartHistory")
     public List<Object> getFoodCartHistory(String foodCartId) {
         return eventStore.readEvents(foodCartId).asStream().map( s -> s.getPayload().toString()).collect(Collectors.toList());
+    }
+
+    @GetMapping("/foodCarts")
+    public CompletableFuture<List<FoodCartView>> getAllFoodCarts() {
+        return queryGateway.query(
+                new RetrieveAllFoodCartsQuery(), ResponseTypes.multipleInstancesOf(FoodCartView.class));
     }
 
 }

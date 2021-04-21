@@ -1,15 +1,14 @@
 package io.axoniq.foodordering.query;
 
-import io.axoniq.foodordering.coreapi.FindFoodCartQuery;
-import io.axoniq.foodordering.coreapi.FoodCartCreatedEvent;
-import io.axoniq.foodordering.coreapi.ProductDeselectedEvent;
-import io.axoniq.foodordering.coreapi.ProductSelectedEvent;
+import io.axoniq.foodordering.coreapi.*;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Profile("query")
 @Component
@@ -44,5 +43,10 @@ class FoodCartProjector {
     @QueryHandler
     public FoodCartView handle(FindFoodCartQuery query) {
         return foodCartViewRepository.findById(query.getFoodCartId()).orElse(null);
+    }
+
+    @QueryHandler
+    public List<FoodCartView> handle(RetrieveAllFoodCartsQuery query) {
+        return foodCartViewRepository.findAll().stream().collect(Collectors.toList());
     }
 }

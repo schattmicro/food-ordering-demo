@@ -5,3 +5,5 @@ import java.util.*
 data class FindFoodCartQuery(val foodCartId: UUID)
 
 class RetrieveProductOptionsQuery
+
+class RetrieveAllFoodCartsQuery
